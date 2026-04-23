@@ -120,11 +120,17 @@ const MegaMenu = ({ category, onNav, isOpen }) => {
   );
 };
 
-const ProductCard = ({ product, onClick, onAddToBag }) => (
+const ProductCard = ({ product, onClick, onAddToBag, onToggleWishlist, isWishlisted }) => (
   <div className="product-card" onClick={() => onClick(product)}>
     <div className="product-image-container">
       <img src={product.image} alt={product.name} />
       {product.tag && <div className="product-badge">{product.tag}</div>}
+      <button 
+        className={`product-wishlist-btn ${isWishlisted ? 'wishlisted' : ''}`} 
+        onClick={(e) => onToggleWishlist(product, e)}
+      >
+        <Heart size={18} fill={isWishlisted ? "var(--color-primary)" : "none"} />
+      </button>
       <div className="unisex-label">UNISEX FIT</div>
       <button className="product-add-btn" onClick={(e) => { e.stopPropagation(); onAddToBag(product); }}>
         Quick Add
@@ -182,7 +188,13 @@ const CategoryPage = ({ currentView, onProductClick, onAddToBag }) => {
         <div className="product-grid">
           {products.map((product, idx) => (
             <div style={{ animationDelay: `${idx * 0.1}s` }} key={product.id}>
-              <ProductCard product={product} onClick={onProductClick} onAddToBag={onAddToBag} />
+              <ProductCard 
+                product={product} 
+                onClick={onProductClick} 
+                onAddToBag={onAddToBag} 
+                onToggleWishlist={onAddToBag._onWishlist} /* Pass via wrapper */
+                isWishlisted={onAddToBag._wishlist.some(item => item.id === product.id)}
+              />
             </div>
           ))}
         </div>
@@ -191,7 +203,7 @@ const CategoryPage = ({ currentView, onProductClick, onAddToBag }) => {
   );
 };
 
-const ProductDetailPage = ({ product, onBack, products, onAddToBag }) => {
+const ProductDetailPage = ({ product, onBack, products, onAddToBag, onToggleWishlist, isWishlisted }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [product]);
@@ -207,6 +219,12 @@ const ProductDetailPage = ({ product, onBack, products, onAddToBag }) => {
         <div className="product-detail-image-wrapper">
           <img src={product.image} alt={product.name} className="product-detail-img" />
           {product.tag && <div className="product-badge large-badge">{product.tag}</div>}
+          <button 
+            className={`product-wishlist-btn detail-wishlist-btn ${isWishlisted ? 'wishlisted' : ''}`}
+            onClick={(e) => onToggleWishlist(product, e)}
+          >
+            <Heart size={22} fill={isWishlisted ? "var(--color-primary)" : "none"} />
+          </button>
         </div>
         
         <div className="product-detail-info">
@@ -235,6 +253,7 @@ const ProductDetailPage = ({ product, onBack, products, onAddToBag }) => {
           </div>
           
           <button className="btn-primary add-to-cart-large" onClick={() => onAddToBag(product)}>ADD TO BAG</button>
+          {/* ... suggestions ... */}
           
           <div className="style-it-with">
             <h3>Style it with</h3>
@@ -483,17 +502,57 @@ const UserDrawer = ({ isOpen, onClose, user, onLogout }) => {
   );
 };
 
+const WishlistDrawer = ({ isOpen, onClose, wishlist, onRemove, onMoveToBag }) => {
+  return (
+    <>
+      <div className={`cart-overlay ${isOpen ? 'cart-overlay-open' : ''}`} onClick={onClose}></div>
+      <div className={`cart-drawer wishlist-drawer ${isOpen ? 'cart-drawer-open' : ''}`}>
+        <div className="cart-header">
+          <h2>WISHLIST ({wishlist.length})</h2>
+          <button className="cart-close-btn" onClick={onClose}><X size={24} /></button>
+        </div>
+
+        <div className="cart-items">
+          {wishlist.length === 0 ? (
+            <div className="cart-empty">YOUR WISHLIST IS EMPTY</div>
+          ) : (
+            wishlist.map((item, idx) => (
+              <div className="cart-item" key={`${item.id}-${idx}`}>
+                <img src={item.image} alt={item.name} className="cart-item-img" />
+                <div className="cart-item-info">
+                  <div className="cart-item-name">{item.name}</div>
+                  <div className="cart-item-price">{item.price}</div>
+                  <div className="wishlist-actions">
+                    <button className="wishlist-move-btn" onClick={() => onMoveToBag(item, idx)}>ADD TO BAG</button>
+                    <button className="cart-remove-btn" onClick={() => onRemove(idx)}>REMOVE</button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="cart-footer">
+          <button className="btn-primary checkout-btn" onClick={onClose}>CONTINUE SHOPPING</button>
+        </div>
+      </div>
+    </>
+  );
+};
+
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [currentView, setCurrentView] = useState({ page: 'home', subcat: null, productId: null });
   const [activeMenu, setActiveMenu] = useState(null);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState(null);
   const [cartNotification, setCartNotification] = useState(null);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [showUserDrawer, setShowUserDrawer] = useState(false);
+  const [showWishlistDrawer, setShowWishlistDrawer] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -515,6 +574,26 @@ function App() {
     setCart(prev => [...prev, product]);
     setShowCartDrawer(true);
     // Removed toast in favor of opening the drawer
+  };
+
+  const handleToggleWishlist = (product, e) => {
+    if (e) e.stopPropagation();
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    const exists = wishlist.some(item => item.id === product.id);
+    if (exists) {
+      setWishlist(prev => prev.filter(item => item.id !== product.id));
+    } else {
+      setWishlist(prev => [...prev, product]);
+    }
+  };
+
+  const handleMoveToBag = (product, idx) => {
+    setCart(prev => [...prev, product]);
+    setWishlist(prev => prev.filter((_, i) => i !== idx));
+    setShowCartDrawer(true);
   };
 
   const handleGoogleSuccess = (userData) => {
@@ -582,7 +661,10 @@ function App() {
 
         <div className="nav-icons">
           <button className="nav-icon"><Search size={22} strokeWidth={2.5} /></button>
-          <button className="nav-icon"><Heart size={22} strokeWidth={2.5} /></button>
+          <button className="nav-icon wishlist-icon-wrapper" onClick={() => setShowWishlistDrawer(true)}>
+            <Heart size={22} strokeWidth={2.5} fill={wishlist.length > 0 ? "var(--color-primary)" : "none"} color={wishlist.length > 0 ? "var(--color-primary)" : "currentColor"} />
+            {wishlist.length > 0 && <span className="cart-count wishlist-count">{wishlist.length}</span>}
+          </button>
           <button className="nav-icon cart-icon-wrapper" onClick={() => setShowCartDrawer(true)}>
             <ShoppingBag size={22} strokeWidth={2.5} />
             {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
@@ -698,7 +780,7 @@ function App() {
         <CategoryPage 
           currentView={currentView} 
           onProductClick={(p) => setCurrentView({ ...currentView, productId: p.id })}
-          onAddToBag={handleAddToBag}
+          onAddToBag={Object.assign((p) => handleAddToBag(p), { _onWishlist: handleToggleWishlist, _wishlist: wishlist })}
         />
       )}
 
@@ -768,6 +850,14 @@ function App() {
         onClose={() => setShowUserDrawer(false)}
         user={user}
         onLogout={() => { handleLogout(); setShowUserDrawer(false); }}
+      />
+
+      <WishlistDrawer
+        isOpen={showWishlistDrawer}
+        onClose={() => setShowWishlistDrawer(false)}
+        wishlist={wishlist}
+        onRemove={(idx) => setWishlist(prev => prev.filter((_, i) => i !== idx))}
+        onMoveToBag={handleMoveToBag}
       />
 
       {cartNotification && (

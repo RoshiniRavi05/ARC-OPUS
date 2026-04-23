@@ -1,0 +1,48 @@
+import fs from 'fs';
+import path from 'path';
+
+const prompts = [
+  "full-body-streetwear-fashion-photo-of-female-wearing-high-rise-vintage-blue-jeans-and-simple-white-crop-top-no-jacket-focus-on-legs-and-jeans-urban-background-streetwear-photography",
+  "full-body-photo-of-gen-z-woman-wearing-ultra-baggy-street-wide-leg-jeans-and-fitted-tank-top-no-jacket-focus-on-the-wide-jeans-premium-fashion",
+  "waist-to-ankle-photo-of-young-woman-wearing-distressed-slim-straight-jeans-and-minimal-tee-focus-on-the-jeans-streetwear-aesthetic-no-jacket",
+  "waist-down-streetwear-photo-of-woman-wearing-light-wash-mom-jeans-with-sneakers-focus-on-denim-jeans-clean-lighting-no-jacket",
+  "full-shot-photo-of-gen-z-woman-wearing-wide-leg-cargo-denim-pants-and-basic-crop-top-no-jacket-focus-on-cargo-jeans-fashion-photography",
+  "full-body-street-style-photo-of-woman-wearing-dark-wash-straight-fit-jeans-no-jacket-focus-on-jeans-and-sneakers-minimal-top",
+  "front-view-full-body-photo-of-woman-wearing-ripped-high-waisted-jeans-and-small-shirt-no-jacket-focus-on-legs-and-denim-streetwear",
+  "full-body-photo-waist-to-ankle-of-woman-wearing-vintage-washed-mom-jeans-high-waisted-with-white-tee-no-jacket-focus-on-the-jeans",
+  "streetwear-photography-of-woman-wearing-extremely-baggy-oversized-denim-jeans-no-jacket-focus-strictly-on-the-baggy-jeans-and-shoes",
+  "full-body-photo-of-woman-wearing-ultra-wide-leg-crop-jeans-fashionable-streetwear-no-jacket-focus-on-bottom-wear-jeans"
+];
+
+const images = prompts.map((prompt, i) => ({
+  name: `jeans_${i + 1}.png`,
+  url: `https://image.pollinations.ai/prompt/${prompt}?width=400&height=500&nologo=true&seed=${100 + i}`
+}));
+
+const dir = './public/women-jeans';
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function download() {
+  for (const img of images) {
+    if (fs.existsSync(path.join(dir, img.name))) {
+      console.log('Skipping ' + img.name);
+      continue;
+    }
+    console.log('Downloading ' + img.name);
+    try {
+      const response = await fetch(img.url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await response.arrayBuffer();
+      fs.writeFileSync(path.join(dir, img.name), Buffer.from(buffer));
+      console.log('Done ' + img.name);
+      await sleep(2000); // 2 second delay to avoid ratelimit
+    } catch (e) {
+      console.error('Failed ' + img.name, e.message);
+    }
+  }
+}
+download();

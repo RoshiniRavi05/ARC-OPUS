@@ -589,7 +589,12 @@ function App() {
           </button>
           {user ? (
             <div className="user-logged-in" onClick={() => setShowUserDrawer(true)} title={`Signed in as ${user.name}`}>
-              <img src={user.picture} alt={user.name} className="user-avatar" />
+              <img 
+                src={user.picture} 
+                alt={user.name} 
+                className="user-avatar" 
+                style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover' }}
+              />
             </div>
           ) : (
             <button className="nav-icon" onClick={() => setShowAuthModal(true)}><User size={22} strokeWidth={2.5} /></button>

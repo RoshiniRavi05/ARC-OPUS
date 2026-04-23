@@ -307,75 +307,114 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={e => e.stopPropagation()}>
-        <button className="auth-close" onClick={onClose} aria-label="Close modal">
-          <X size={20} />
+      <div className="auth-modal-v3" onClick={e => e.stopPropagation()}>
+        <button className="auth-close-v3" onClick={onClose} aria-label="Close modal">
+          <X size={24} />
         </button>
         
-        <div className="auth-body">
-          <div className="auth-brand">ARC OPUS</div>
-          <h2 className="auth-title">IDENTITY VERIFICATION</h2>
-          <p className="auth-desc">
-            Authenticate to sync your shopping profile across all devices and unlock priority access to new drops.
-          </p>
-
-          <div className="auth-button-group">
-            {GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID' ? (
-              <div ref={googleBtnRef} className="google-btn-wrap"></div>
-            ) : (
-              <button className="google-btn" onClick={handleDemoLogin} disabled={isLoading}>
-                {isLoading ? (
-                  <div className="google-btn-spinner">VERIFYING...</div>
-                ) : (
-                  <>
-                    <svg className="google-icon" viewBox="0 0 24 24" width="18" height="18">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    CONTINUE WITH GOOGLE
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-
-          <div className="auth-trust-badge">
-            <ShieldCheck size={14} /> SECURE IDENTITY PROTOCOL
-          </div>
-
-          <div className="auth-perks">
-            <div className="auth-perk">
-              <div className="perk-icon"><ShoppingBag size={18} /></div>
-              <div className="perk-text">
-                <strong>PERSISTENT BAG</strong>
-                <span>Items stay synced on all your devices.</span>
-              </div>
-            </div>
-            <div className="auth-perk">
-              <div className="perk-icon"><Zap size={18} /></div>
-              <div className="perk-text">
-                <strong>EXPRESS PASS</strong>
-                <span>Bypass queue during high-demand drops.</span>
-              </div>
-            </div>
-            <div className="auth-perk">
-              <div className="perk-icon"><Bell size={18} /></div>
-              <div className="perk-text">
-                <strong>DROP ALERTS</strong>
-                <span>Early notifications for limited releases.</span>
-              </div>
+        <div className="auth-split-container">
+          <div className="auth-image-side">
+            <img 
+              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000" 
+              alt="High Fashion Streetwear"
+              className="auth-hero-img"
+            />
+            <div className="auth-image-overlay">
+              <div className="auth-quote">"THE STREETS ARE YOUR RUNWAY."</div>
             </div>
           </div>
+          
+          <div className="auth-content-side">
+            <div className="auth-brand-v3">ARC OPUS</div>
+            <h2 className="auth-title-v3">JOIN THE<br/>NETWORK</h2>
+            <p className="auth-desc-v3">
+              Unlock exclusive streetwear drops, track your orders, and sync your shopping bag across all devices.
+            </p>
 
-          <div className="auth-footer">
-            <p className="auth-legal">By continuing, you agree to our <a href="#">Terms</a> & <a href="#">Service agreements</a>.</p>
+            <div className="auth-button-group-v3">
+              {GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID' ? (
+                <div ref={googleBtnRef} className="google-btn-wrap-v3"></div>
+              ) : (
+                <button className="google-btn-v3" onClick={handleDemoLogin} disabled={isLoading}>
+                  {isLoading ? (
+                    <div className="google-btn-spinner-v3">AUTHORIZING...</div>
+                  ) : (
+                    <>
+                      <svg className="google-icon-v3" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      CONTINUE WITH GOOGLE
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
+            <div className="auth-perks-v3">
+              <div className="auth-perk-v3">
+                <Zap size={16} /> <span>Priority access to limited drops.</span>
+              </div>
+              <div className="auth-perk-v3">
+                <ShoppingBag size={16} /> <span>Persistent shopping bag.</span>
+              </div>
+            </div>
+
+            <div className="auth-footer-v3">
+              BY CONTINUING, YOU AGREE TO OUR <a href="#">TERMS OF USE</a>.
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+const CartDrawer = ({ isOpen, onClose, cart, onRemove }) => {
+  const total = cart.reduce((sum, item) => sum + parseInt(item.price.replace('$', '')), 0);
+
+  return (
+    <>
+      <div className={`cart-overlay ${isOpen ? 'cart-overlay-open' : ''}`} onClick={onClose}></div>
+      <div className={`cart-drawer ${isOpen ? 'cart-drawer-open' : ''}`}>
+        <div className="cart-header">
+          <h2>YOUR BAG ({cart.length})</h2>
+          <button className="cart-close-btn" onClick={onClose}><X size={24} /></button>
+        </div>
+
+        <div className="cart-items">
+          {cart.length === 0 ? (
+            <div className="cart-empty">YOUR BAG IS EMPTY</div>
+          ) : (
+            cart.map((item, idx) => (
+              <div className="cart-item" key={`${item.id}-${idx}`}>
+                <img src={item.image} alt={item.name} className="cart-item-img" />
+                <div className="cart-item-info">
+                  <div className="cart-item-name">{item.name}</div>
+                  <div className="cart-item-price">{item.price} / SIZE: M</div>
+                  <button className="cart-remove-btn" onClick={() => onRemove(idx)}>REMOVE</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {cart.length > 0 && (
+          <div className="cart-footer">
+            <div className="cart-total-row">
+              <span>SUBTOTAL</span>
+              <span>${total}</span>
+            </div>
+            <button className="btn-primary checkout-btn">CHECKOUT NOW</button>
+            <p className="cart-shipping-info">Shipping and taxes calculated at checkout.</p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
 };
 
 function App() {
@@ -387,6 +426,7 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState(null);
   const [cartNotification, setCartNotification] = useState(null);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -406,8 +446,8 @@ function App() {
       return;
     }
     setCart(prev => [...prev, product]);
-    setCartNotification({ ...product, _nid: Date.now() });
-    setTimeout(() => setCartNotification(null), 3000);
+    setShowCartDrawer(true);
+    // Removed toast in favor of opening the drawer
   };
 
   const handleGoogleSuccess = (userData) => {
@@ -415,10 +455,10 @@ function App() {
     setShowAuthModal(false);
     if (pendingCartItem) {
       setCart(prev => [...prev, pendingCartItem]);
-      setCartNotification({ ...pendingCartItem, _nid: Date.now() });
-      setTimeout(() => setCartNotification(null), 3000);
       setPendingCartItem(null);
     }
+    // Automatically show the bag after logging in
+    setTimeout(() => setShowCartDrawer(true), 500);
   };
 
   const handleLogout = () => {
@@ -476,7 +516,7 @@ function App() {
         <div className="nav-icons">
           <button className="nav-icon"><Search size={22} strokeWidth={2.5} /></button>
           <button className="nav-icon"><Heart size={22} strokeWidth={2.5} /></button>
-          <button className="nav-icon cart-icon-wrapper">
+          <button className="nav-icon cart-icon-wrapper" onClick={() => setShowCartDrawer(true)}>
             <ShoppingBag size={22} strokeWidth={2.5} />
             {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
           </button>
@@ -642,6 +682,13 @@ function App() {
         isOpen={showAuthModal}
         onClose={() => { setShowAuthModal(false); setPendingCartItem(null); }}
         onSuccess={handleGoogleSuccess}
+      />
+
+      <CartDrawer
+        isOpen={showCartDrawer}
+        onClose={() => setShowCartDrawer(false)}
+        cart={cart}
+        onRemove={(idx) => setCart(prev => prev.filter((_, i) => i !== idx))}
       />
 
       {cartNotification && (

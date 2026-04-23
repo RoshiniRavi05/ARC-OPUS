@@ -146,7 +146,7 @@ const ProductCard = ({ product, onClick, onAddToBag, onToggleWishlist, isWishlis
   </div>
 );
 
-const CategoryPage = ({ currentView, onProductClick, onAddToBag }) => {
+const CategoryPage = ({ currentView, onProductClick, onAddToBag, onToggleWishlist, wishlist }) => {
   const products = ALL_PRODUCTS.filter(p => {
     if (p.category !== currentView.page) return false;
     if (currentView.subcat && p.subcat !== currentView.subcat) return false;
@@ -192,8 +192,8 @@ const CategoryPage = ({ currentView, onProductClick, onAddToBag }) => {
                 product={product} 
                 onClick={onProductClick} 
                 onAddToBag={onAddToBag} 
-                onToggleWishlist={onAddToBag._onWishlist} /* Pass via wrapper */
-                isWishlisted={onAddToBag._wishlist.some(item => item.id === product.id)}
+                onToggleWishlist={onToggleWishlist}
+                isWishlisted={wishlist.some(item => item.id === product.id)}
               />
             </div>
           ))}
@@ -690,6 +690,8 @@ function App() {
           products={ALL_PRODUCTS}
           onBack={() => setCurrentView({ ...currentView, productId: null })}
           onAddToBag={handleAddToBag}
+          onToggleWishlist={handleToggleWishlist}
+          isWishlisted={wishlist.some(item => item.id === selectedProduct.id)}
         />
       ) : currentView.page === 'home' ? (
         <>
@@ -780,7 +782,9 @@ function App() {
         <CategoryPage 
           currentView={currentView} 
           onProductClick={(p) => setCurrentView({ ...currentView, productId: p.id })}
-          onAddToBag={Object.assign((p) => handleAddToBag(p), { _onWishlist: handleToggleWishlist, _wishlist: wishlist })}
+          onAddToBag={handleAddToBag}
+          onToggleWishlist={handleToggleWishlist}
+          wishlist={wishlist}
         />
       )}
 

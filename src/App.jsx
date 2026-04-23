@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Heart, ShoppingBag, User, ArrowRight, LogOut, X, Zap, Bell, ShieldCheck } from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, ArrowRight, LogOut, X, Zap, Bell, ShieldCheck, Package, MapPin, Settings } from 'lucide-react';
 
 // ⚙️ Replace with your Google Cloud Console OAuth 2.0 Client ID
 // Get one at: https://console.cloud.google.com/apis/credentials
@@ -416,6 +416,73 @@ const CartDrawer = ({ isOpen, onClose, cart, onRemove }) => {
   );
 };
 
+const UserDrawer = ({ isOpen, onClose, user, onLogout }) => {
+  if (!user) return null;
+
+  const mockOrders = [
+    { id: '#8842', date: 'Oct 12, 2026', status: 'In Transit', total: '$145.00' },
+    { id: '#8711', date: 'Sep 28, 2026', status: 'Delivered', total: '$40.00' }
+  ];
+
+  return (
+    <>
+      <div className={`cart-overlay ${isOpen ? 'cart-overlay-open' : ''}`} onClick={onClose}></div>
+      <div className={`cart-drawer user-drawer ${isOpen ? 'cart-drawer-open' : ''}`}>
+        <div className="cart-header">
+          <h2>ACCOUNT PROFILE</h2>
+          <button className="cart-close-btn" onClick={onClose}><X size={24} /></button>
+        </div>
+
+        <div className="user-drawer-content">
+          <div className="user-profile-header">
+            <img src={user.picture} alt={user.name} className="user-profile-img" />
+            <div className="user-profile-info">
+              <h3>{user.name}</h3>
+              <p>{user.email}</p>
+              <div className="user-status-tag">ARC MEMBER</div>
+            </div>
+          </div>
+
+          <div className="user-section">
+            <div className="user-section-title"><MapPin size={16} /> SHIPPING ADDRESS</div>
+            <div className="user-address-card">
+              <strong>OFFICE / PRIMARY</strong>
+              <p>720 West 27th Street<br/>New York, NY 10001<br/>United States</p>
+              <button className="user-edit-btn">EDIT ADDRESS</button>
+            </div>
+          </div>
+
+          <div className="user-section">
+            <div className="user-section-title"><Package size={16} /> RECENT ORDERS</div>
+            <div className="user-orders">
+              {mockOrders.map(order => (
+                <div className="user-order-item" key={order.id}>
+                  <div className="order-main">
+                    <span className="order-id">ORDER {order.id}</span>
+                    <span className="order-status">{order.status}</span>
+                  </div>
+                  <div className="order-sub">
+                    <span>{order.date}</span>
+                    <span>{order.total}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="user-view-all">VIEW ALL ORDERS</button>
+          </div>
+        </div>
+
+        <div className="user-drawer-footer">
+          <button className="user-settings-btn"><Settings size={18} /> ACCOUNT SETTINGS</button>
+          <button className="user-logout-btn" onClick={onLogout}>
+            <LogOut size={18} /> SIGN OUT OF ARC OPUS
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [currentView, setCurrentView] = useState({ page: 'home', subcat: null, productId: null });
@@ -426,6 +493,7 @@ function App() {
   const [pendingCartItem, setPendingCartItem] = useState(null);
   const [cartNotification, setCartNotification] = useState(null);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
+  const [showUserDrawer, setShowUserDrawer] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -520,7 +588,7 @@ function App() {
             {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
           </button>
           {user ? (
-            <div className="user-logged-in" onClick={handleLogout} title={`Signed in as ${user.name} — click to sign out`}>
+            <div className="user-logged-in" onClick={() => setShowUserDrawer(true)} title={`Signed in as ${user.name}`}>
               <img src={user.picture} alt={user.name} className="user-avatar" />
             </div>
           ) : (
@@ -688,6 +756,13 @@ function App() {
         onClose={() => setShowCartDrawer(false)}
         cart={cart}
         onRemove={(idx) => setCart(prev => prev.filter((_, i) => i !== idx))}
+      />
+
+      <UserDrawer
+        isOpen={showUserDrawer}
+        onClose={() => setShowUserDrawer(false)}
+        user={user}
+        onLogout={() => { handleLogout(); setShowUserDrawer(false); }}
       />
 
       {cartNotification && (

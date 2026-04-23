@@ -1431,6 +1431,15 @@ button {
   align-items: center;
 }
 
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primary);
+  transition: all 0.3s ease;
+}
+
 .user-avatar:hover {
   border-color: #fff;
   transform: scale(1.12);

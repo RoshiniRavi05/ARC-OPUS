@@ -549,6 +549,7 @@ function App() {
   const [wishlist, setWishlist] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState(null);
+  const [pendingWishlistItem, setPendingWishlistItem] = useState(null);
   const [cartNotification, setCartNotification] = useState(null);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [showUserDrawer, setShowUserDrawer] = useState(false);
@@ -579,6 +580,7 @@ function App() {
   const handleToggleWishlist = (product, e) => {
     if (e) e.stopPropagation();
     if (!user) {
+      setPendingWishlistItem(product);
       setShowAuthModal(true);
       return;
     }
@@ -599,12 +601,17 @@ function App() {
   const handleGoogleSuccess = (userData) => {
     setUser(userData);
     setShowAuthModal(false);
+    
     if (pendingCartItem) {
       setCart(prev => [...prev, pendingCartItem]);
       setPendingCartItem(null);
+      setTimeout(() => setShowCartDrawer(true), 500);
+    } else if (pendingWishlistItem) {
+      const exists = wishlist.some(item => item.id === pendingWishlistItem.id);
+      if (!exists) setWishlist(prev => [...prev, pendingWishlistItem]);
+      setPendingWishlistItem(null);
+      // Notice: We do NOT open the wishlist drawer automatically here
     }
-    // Automatically show the bag after logging in
-    setTimeout(() => setShowCartDrawer(true), 500);
   };
 
   const handleLogout = () => {
@@ -838,7 +845,11 @@ function App() {
 
       <AuthModal
         isOpen={showAuthModal}
-        onClose={() => { setShowAuthModal(false); setPendingCartItem(null); }}
+        onClose={() => { 
+          setShowAuthModal(false); 
+          setPendingCartItem(null); 
+          setPendingWishlistItem(null); 
+        }}
         onSuccess={handleGoogleSuccess}
       />
 

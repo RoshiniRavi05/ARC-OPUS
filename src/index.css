@@ -1672,7 +1672,8 @@ button {
 }
 
 .wishlist-count {
-  background: var(--color-primary);
+  background: #fff;
+  color: #000;
   border: 1px solid #000;
 }
 

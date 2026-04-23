@@ -415,7 +415,6 @@ const CartDrawer = ({ isOpen, onClose, cart, onRemove }) => {
     </>
   );
 };
-};
 
 function App() {
   const [scrolled, setScrolled] = useState(false);

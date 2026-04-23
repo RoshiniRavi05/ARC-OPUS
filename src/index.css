@@ -1085,9 +1085,9 @@ button {
   font-family: var(--font-logo);
   color: #fff;
   font-size: 64px;
-  line-height: 0.9;
-  margin-bottom: 20px;
-  letter-spacing: -2px;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
 }
 
 .auth-desc-v3 {
